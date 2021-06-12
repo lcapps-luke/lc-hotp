@@ -8,9 +8,10 @@ class Hotp{
 	/**
 	 * Verify a one-time password against a secret key
 	 * @param secret The base32 encoded secret key
-	 * @param code The six digit password provided by the authenticating user
-	 * @param range The range of 30 second increments to check
+	 * @param password The password provided by the authenticating user
 	 * @param passwordSize The length of the password (defaults to 6)
+	 * @param range The range of 30 second increments to check
+	 * @param hashMethod 
 	 * @return Bool true if the password is valid for the secret at this time
 	 */
 	public static function verify(secret:String, password:Int, passwordSize:Int = 6, range:Int = 3, hashMethod:HashMethod = HashMethod.SHA1):Bool{

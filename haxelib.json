@@ -4,8 +4,8 @@
 	"license": "MIT",
 	"tags": ["OTP", "HOTP", "Multi", "Factor", "Authentication", "RFC6238", "Password"],
 	"description": "A pure Haxe implementation of HMAC One time passwords",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"classPath": "src/",
-	"releasenote": "Initial release",
+	"releasenote": "Hotp.verify documentation fix",
 	"contributors": ["lcann"]
   }
