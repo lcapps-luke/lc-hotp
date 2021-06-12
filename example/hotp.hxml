@@ -1,0 +1,4 @@
+-cp src
+-main Main
+-lib lc-hotp
+-neko build/main.n

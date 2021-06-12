@@ -1,0 +1,11 @@
+{
+	"name": "lc-hotp",
+	"url" : "https://github.com/lcapps-luke/lc-hotp",
+	"license": "MIT",
+	"tags": ["OTP", "HOTP", "Multi", "Factor", "Authentication", "RFC6238", "Password"],
+	"description": "A pure Haxe implementation of HMAC One time passwords",
+	"version": "1.0.0",
+	"classPath": "src/",
+	"releasenote": "Initial release",
+	"contributors": ["lcann"]
+  }
