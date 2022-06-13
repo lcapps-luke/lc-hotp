@@ -4,19 +4,24 @@ import haxe.crypto.Hmac;
 import haxe.io.Bytes;
 
 class Hotp{
+	/**
+	 * Random number function used for generating secrets. Must return a number greater than or equal to `0.0`, and less than `1.0`.
+	 */
+	public static var RANDOM_FUNCTION(default, default):Void->Float = Math.random;
 	
 	/**
 	 * Verify a one-time password against a secret key
 	 * @param secret The base32 encoded secret key
 	 * @param password The password provided by the authenticating user
 	 * @param passwordSize The length of the password (defaults to 6)
-	 * @param range The range of 30 second increments to check
+	 * @param range The range of periods to check
 	 * @param hashMethod 
+	 * @param period The period that each password is valid for in milliseconds
 	 * @return Bool true if the password is valid for the secret at this time
 	 */
-	public static function verify(secret:String, password:Int, passwordSize:Int = 6, range:Int = 3, hashMethod:HashMethod = HashMethod.SHA1):Bool{
+	public static function verify(secret:String, password:Int, passwordSize:Int = 6, range:Int = 3, hashMethod:HashMethod = HashMethod.SHA1, period:Int = 30000):Bool{
 		var key:Bytes = Base32.decode(secret);
-		var timestamp = Date.now().getTime() / 30000;
+		var timestamp = Date.now().getTime() / period;
 
 		for(i in -range...range){
 			var checkTime = Math.floor(timestamp + i);
@@ -32,8 +37,8 @@ class Hotp{
 
 	/**
 	 * Generate a HOTP code
-	 * @param key 
-	 * @param counter 
+	 * @param key The secret key
+	 * @param counter The counter / time block
 	 * @param hashMethod 
 	 * @return Bytes
 	 */
@@ -63,16 +68,34 @@ class Hotp{
 
 	/**
 	 * Creates a URI which can be encoded as a QR code to be used by an authenticator app
-	 * @param username
+	 * @param username 
 	 * @param domain 
 	 * @param secret 
 	 * @param issuer 
+	 * @param algorithm 
+	 * @param digits The length of each password
+	 * @param period The period that each password is valid for in seconds
 	 * @return String
 	 */
-	public static function createAuthenticatorUri(username:String, domain:String, secret:String, issuer:String):String{
+	public static function createAuthenticatorUri(username:String, domain:String, secret:String, issuer:String, algorithm:String = null, digits:Null<Int> = null, period:Null<Int> = null):String{
 		var encodedIssuer = StringTools.urlEncode(issuer);
 		var encodedUsername = StringTools.urlEncode(username);
-		return 'otpauth://totop/$encodedIssuer:$encodedUsername@$domain?secret=$secret&issuer=$encodedIssuer';
+
+		var result = 'otpauth://totop/$encodedIssuer:$encodedUsername@$domain?secret=$secret&issuer=$encodedIssuer';
+
+		if(algorithm != null){
+			result += '&algorithm=$algorithm';
+		}
+
+		if(digits != null){
+			result += '&digits=$digits';
+		}
+
+		if(period != null){
+			result += '&period=$period';
+		}
+
+		return result;
 	}
 
 	/**
@@ -84,7 +107,7 @@ class Hotp{
 		var res = "";
 
 		for(i in 0...length){
-			var idx = Math.round(Math.random() * Base32.CHARS.length);
+			var idx = Math.round(RANDOM_FUNCTION() * Base32.CHARS.length);
 			res += Base32.CHARS.charAt(idx);
 		}
 		
